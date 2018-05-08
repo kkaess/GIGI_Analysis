@@ -10,6 +10,10 @@ from os import path
 from astropy.io import fits
 import numpy as np
 
+'''
+Another kludge-y script, flips right-hand half of images left-right.
+'''
+
 if __name__ == '__main__':
     """Usage: python3 FlipFits.py <filename.fits>
     output: <filename_edit.fits> with right half of images flipped left-right"""

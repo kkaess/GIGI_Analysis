@@ -10,6 +10,12 @@ import os.path as path
 from astropy.io import fits
 import numpy as np
 
+'''
+This is a a kludge-y script which takes as an input the names of an image file and a background file, 
+compresses each of those into a single image, which only works for this saturated regime we have had,
+subtracts the background from the image, and outputs to a new file labeled '<image_file>_subtracted.fits'
+'''
+
 if __name__ == '__main__':
     imageFilename = sys.argv[1]
     backgroundFilename = sys.argv[2]
