@@ -16,6 +16,8 @@ import numpy as np
 
 from astropy.modeling import models, fitting
 
+from external.DraggableColorbar import DraggableColorbar
+
 
 class GuessValues(object):
 
@@ -56,10 +58,12 @@ if __name__ == '__main__':
     pyplot.imshow(modelImage, origin='lower', interpolation='nearest')
     pyplot.title("Model")
     pyplot.subplot(1, 3, 3, sharex=ax1, sharey=ax1)
-    pyplot.imshow(fitsImage - modelImage, origin='lower',
-                  interpolation='nearest')
+    img = pyplot.imshow(fitsImage - modelImage, origin='lower',
+                        interpolation='nearest')
     pyplot.title("Residual")
-    pyplot.colorbar(extend='both')
+    cbar = pyplot.colorbar()
+    cbar = DraggableColorbar(cbar, img)
+    cbar.connect()
     # This to be implemented later
     #axwhat = pyplot.axes([0.7, 0.05, 0.1, 0.075])
     #button = Button(axwhat, 'Select Spot')
