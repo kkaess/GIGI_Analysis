@@ -16,6 +16,12 @@ from scratch import *
 from matplotlib import pyplot as plt
 plt.rcParams["figure.figsize"] =[19.2,10.8]
 
+import seaborn as sns
+
+#sns.set()
+sns.set_context("poster")
+
+
 dark202 = fits.open('/run/media/kaess/ResearchBackup1/FITS Files/2018_05_22/dark202/Picture_1/Frame_1.fits')
 laser202 = fits.open('/run/media/kaess/ResearchBackup1/FITS Files/2018_05_22/laser202/Picture_1/Frame_1.fits')
 
@@ -39,25 +45,56 @@ y,x = np.mgrid[:100,:40]
 gratingFit = fitMethod(fitEstimateGrating,x,y,gratingImageSmall)
 mirrorFit = fitMethod(fitEstimateGrating,x,y,mirrorImageSmall)
 
-mirrorScale = 3.71
+mirrorFitLine = np.sum(mirrorFit(x,y),1)
+gratingFitLine = np.sum(gratingFit(x,y),1)
 
-plt.plot(np.sum(gratingImageSmall,1),linestyle='',marker='o')
-plt.plot(np.sum(mirrorImageSmall,1)*mirrorScale,linestyle='',marker='s')
-plt.plot(np.sum(mirrorFit(x,y),1)*mirrorScale)
-plt.plot(np.sum(gratingFit(x,y),1))
+gratingScale = 1/gratingFitLine[50]
+mirrorScale = 1/mirrorFitLine[50]
+
+x_range = range(0,81)
+
+plt.plot(x_range,np.sum(gratingImageSmall,1)[10:-9]*gratingScale,'ro',label='Grating')
+plt.plot(x_range,gratingFitLine[10:-9]*gratingScale,'r-',label='Grating Fit')
+plt.plot(x_range,np.sum(mirrorImageSmall,1)[10:-9]*mirrorScale,'bs',label='Mirror')
+plt.plot(x_range,mirrorFitLine[10:-9]*mirrorScale,'b-',label='Mirror Fit')
+plt.xlabel('Pixel')
+plt.ylabel('Normalized Intensities')
+
+plt.xlim(-1,81)
+plt.legend()
 
 plt.savefig('ScaledSpotProfiles.png')
 
 plt.close()
 
-plt.subplot(1,4,1)
-plt.imshow(gratingImageSmall)
-plt.subplot(1,4,2)
-plt.imshow(gratingFit(x,y))
-plt.subplot(1,4,3)
-plt.imshow(mirrorImageSmall)
-plt.subplot(1,4,4)
-plt.imshow(mirrorFit(x,y))
+fig = plt.figure()
+
+fig, axes = plt.subplots(1,4)
+
+image1 = gratingImageSmall[10:-9,:]*gratingScale
+image2 = gratingFit(x,y)[10:-9,:]*gratingScale
+image3 = mirrorImageSmall[10:-9,:]*mirrorScale
+image4 = mirrorFit(x,y)[10:-9,:]*mirrorScale
+
+imin = min((np.min(image1),np.min(image2),np.min(image3),np.min(image4)))
+imax = max((np.max(image1),np.max(image2),np.max(image3),np.max(image4)))
+
+
+ax = plt.subplot(1,4,1)
+ax.imshow(image1,vmin=imin,vmax=imax)
+ax.title.set_text('Grating')
+
+ax = plt.subplot(1,4,2)
+ax.imshow(image2,vmin=imin,vmax=imax)
+ax.title.set_text('Grating Fit')
+
+ax = plt.subplot(1,4,3)
+ax.imshow(image3,vmin=imin,vmax=imax)
+ax.title.set_text('Mirror')
+
+ax = plt.subplot(1,4,4)
+img = ax.imshow(image4,vmin=imin,vmax=imax)
+ax.title.set_text('Mirror Fit')
 
 
 plt.savefig('SpotImagesWithFits.png')
