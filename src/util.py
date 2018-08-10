@@ -28,8 +28,8 @@ def diff(hdul, frame1, frame2):
 def imshowFrame(hdul,frame_):
     imshow(frame(hdul,frame_))
     
-def imshowStretch(hdul,frame_,min,max):
-    imshow(np.clip(frame(hdul,frame_),min,max))
+def imshowStretch(hdul,frame_,min_,max_):
+    imshow(np.clip(frame(hdul,frame_),min_,max_))
     
 def flipRHS(image2D):
     width = np.shape(image2D)[1]
