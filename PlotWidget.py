@@ -24,14 +24,10 @@ class PlotWidget(QtWidgets.QWidget):
         self.setLayout(QtWidgets.QVBoxLayout(self))
         self.__figure__ = Figure()
         self.__canvas__ = FigureCanvas(self.__figure__)
-        self.__figure__.set_canvas(self.__canvas__)
+        #This next line works for when Axes are created, but not when the axis imshow is called
+        self.__figure__.add_axobserver(lambda x:self.__canvas__.draw_idle())
         self.layout().addWidget(self.__canvas__)
         self.layout().setMenuBar(NavigationToolbar2QT(self.__canvas__,self))
-
-    def repaint(self):
-        if self.__canvas__ is not None:
-            self.__canvas__.draw_idle()
-        return QtWidgets.QWidget.repaint(self)
 
 
     def get_figure(self):
@@ -40,3 +36,7 @@ class PlotWidget(QtWidgets.QWidget):
 
     def get_canvas(self):
         return self.__canvas__
+    
+    def imshow(self,*args,**kwargs):
+        self.__figure__.gca().imshow(*args,**kwargs)
+        self.__canvas__.draw_idle()
